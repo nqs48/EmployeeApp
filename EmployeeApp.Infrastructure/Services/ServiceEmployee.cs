@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeApp.Infrastructure.Services
 {
-    internal class ServiceEmployee : IServiceEmployee
+    public class ServiceEmployee : IServiceEmployee
     {
 
         private readonly List<Employee> _employees;
