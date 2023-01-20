@@ -12,7 +12,7 @@ builder.Services.AddSwaggerGen();
 
 
 //Service Employee
-builder.Services.AddScoped<IServiceEmployee, ServiceEmployee>();
+builder.Services.AddSingleton<IServiceEmployee, ServiceEmployee>();
 
 var app = builder.Build();
 
