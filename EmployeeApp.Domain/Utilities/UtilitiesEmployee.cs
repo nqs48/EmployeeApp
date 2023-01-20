@@ -22,6 +22,7 @@ namespace EmployeeApp.Domain.Utilities
                 Email = employee.Email,
                 EmployeeCode = employee.EmployeeCode,
                 UrlPhoto = employee.UrlPhoto,
+                Age= employee.Age,
             };
         }
     }
