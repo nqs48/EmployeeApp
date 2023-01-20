@@ -10,10 +10,10 @@ namespace EmployeeApp.Infrastructure.Services
     public interface IServiceEmployee
     {
         public IEnumerable<Employee> GetEmployees();
-        public Employee GetEmployee(string EmployeeCode);
+        public Employee GetEmployee(string employeeCode);
 
-        public Employee AddEmployee(Employee Employee);
-        public Employee UpdateEmployee(Employee Employee);
-        public Employee DeleteEmployee(string EmployeeCode);
+        public void AddEmployee(Employee employee);
+        public void UpdateEmployee(Employee employee);
+        public Employee DeleteEmployee(string employeeCode);
     }
 }

@@ -1,68 +1,151 @@
-﻿using EmployeeApp.Domain;
+﻿using Dapper;
+using EmployeeApp.Domain;
+using EmployeeApp.Infrastructure.AppData;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace EmployeeApp.Infrastructure.Services
 {
     public class ServiceEmployee : IServiceEmployee
     {
+        private string ConnString;
 
-        private readonly List<Employee> _employees;
+        public ServiceEmployee(DbConnection conection) {
+            ConnString = conection.ConnectionString;
+        }
 
-        public ServiceEmployee()
+        private SqlConnection Conection()
         {
-            _employees = new List<Employee>()
+            return new SqlConnection(ConnString);
+        }
+
+
+        public void AddEmployee(Employee employee)
+        {
+            SqlConnection sqlConnection = Conection();
+            try
             {
-                new Employee {Id= 1, Name= "Nestea", EmployeeCode="E001", Age= 25, Email="@nestea", UrlPhoto="dhbusdghushgd.jpg", HireDate= DateTime.Now},
-                new Employee {Id= 2, Name= "Noah", EmployeeCode="E002", Age= 22, Email="@noah", UrlPhoto="dhbusdghushgd.jpg", HireDate= DateTime.Now},
-                new Employee {Id= 3, Name= "Harry", EmployeeCode="E003", Age= 23, Email="@harry", UrlPhoto="dhbusdghushgd.jpg", HireDate= DateTime.Now},
-                new Employee {Id= 4, Name= "Anne", EmployeeCode="E004", Age= 24, Email="@anne", UrlPhoto="dhbusdghushgd.jpg", HireDate= DateTime.Now},
+                sqlConnection.Open();
+                var param = new DynamicParameters();
+                param.Add("@Name", employee.Name, DbType.String, ParameterDirection.Input, 100);
+                param.Add("@EmployeeCode", employee.EmployeeCode, DbType.String, ParameterDirection.Input, 4);
+                param.Add("@UrlPhoto", employee.UrlPhoto, DbType.String, ParameterDirection.Input);
+                param.Add("@Email", employee.Email, DbType.String, ParameterDirection.Input, 100);
+                param.Add("@Age", employee.Age, DbType.Int32, ParameterDirection.Input);
+                param.Add("@HireDate", employee.HireDate, DbType.DateTime, ParameterDirection.Input);
 
-            };
-        }
-
-        public Employee AddEmployee(Employee Employee)
-        {
-            _employees.Add(Employee);
-            return Employee;
-        }
-
-        public Employee GetEmployee(string EmployeeCode)
-        {
-            var employeeFound= _employees.Where(e => e.EmployeeCode == EmployeeCode).FirstOrDefault();
-            if (employeeFound == null) return null;
-
-            return employeeFound;
-        }
-
-        public IEnumerable<Employee> GetEmployees()
-        {
-            return _employees;
-        }
-
-        public Employee UpdateEmployee(Employee employee)
-        {
-            int posicion= _employees.FindIndex(e => e.Id== employee.Id);
-            if(posicion != -1) 
+                sqlConnection.ExecuteScalar("EmployeeAdd", param, commandType: CommandType.StoredProcedure);
+            }
+            catch(Exception ex)
             {
-                _employees[posicion]= employee;
+                throw new Exception("Unespected Error" + ex.Message);
+            }
+            finally 
+            { 
+                //Cerrer conection
+                sqlConnection.Close();
+
+                //Liberar recursos
+                sqlConnection.Dispose();
+
+
+            }
+        }
+
+        public Employee GetEmployee(string employeeCode)
+        {
+            SqlConnection sqlConnection = Conection();
+            Employee employee = null;
+            try
+            {
+                sqlConnection.Open();
+                var param = new DynamicParameters();
+                param.Add("@EmployeeCode", employeeCode, DbType.String, ParameterDirection.Input, 4);
+              
+                employee=  sqlConnection.QueryFirstOrDefault<Employee>("EmployeeGet", param, commandType: CommandType.StoredProcedure);
+                
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unspected Error" + ex.Message);
+            }
+            finally
+            {
+                //Close conection
+                sqlConnection.Close();
+                //Realease resources
+                sqlConnection.Dispose();
+
+
             }
             return employee;
         }
 
+        public IEnumerable<Employee> GetEmployees()
+        {
+            SqlConnection sqlConnection = Conection();
+            List<Employee> employees = new List<Employee>();
+            try
+            {
+                sqlConnection.Open();
+               
+                var res = sqlConnection.Query<Employee>("EmployeeGet", commandType: CommandType.StoredProcedure);
+                employees= res.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unspected Error" + ex.Message);
+            }
+            finally
+            {
+                //Close conection
+                sqlConnection.Close();
+                //Liberar recursos
+                sqlConnection.Dispose();
+
+
+            }
+            return employees;
+        }
+
+        public void UpdateEmployee(Employee employee)
+        {
+            SqlConnection sqlConnection = Conection();
+            try
+            {
+                sqlConnection.Open();
+                var param = new DynamicParameters();
+                param.Add("@Name", employee.Name, DbType.String, ParameterDirection.Input, 100);
+                param.Add("@EmployeeCode", employee.EmployeeCode, DbType.String, ParameterDirection.Input, 4);
+                param.Add("@UrlPhoto", employee.UrlPhoto, DbType.String, ParameterDirection.Input);
+                param.Add("@Email", employee.Email, DbType.String, ParameterDirection.Input, 100);
+                param.Add("@Age", employee.Age, DbType.Int32, ParameterDirection.Input);
+
+                sqlConnection.ExecuteScalar("EmployeeUpdate", param, commandType: CommandType.StoredProcedure);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unespected Error" + ex.Message);
+            }
+            finally
+            {
+                //Cerrer conection
+                sqlConnection.Close();
+                //Liberar recursos
+                sqlConnection.Dispose();
+            }
+        }
+
         public Employee DeleteEmployee(string EmployeeCode)
         {
-
-            int posicion = _employees.FindIndex(e => e.EmployeeCode == EmployeeCode);
-            if (posicion == -1) return null;
-            
-            Employee employeeDelete = _employees[posicion];
-            _employees.RemoveAt(posicion);
-            return employeeDelete;
-            
+            throw new NotImplementedException();
         }
     }
 }
