@@ -52,5 +52,17 @@ namespace EmployeeApp.Infrastructure.Services
             }
             return employee;
         }
+
+        public Employee DeleteEmployee(string EmployeeCode)
+        {
+
+            int posicion = _employees.FindIndex(e => e.EmployeeCode == EmployeeCode);
+            if (posicion == -1) return null;
+            
+            Employee employeeDelete = _employees[posicion];
+            _employees.RemoveAt(posicion);
+            return employeeDelete;
+            
+        }
     }
 }
