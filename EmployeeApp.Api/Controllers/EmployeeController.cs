@@ -4,7 +4,9 @@ using EmployeeApp.Domain.Utilities;
 using EmployeeApp.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using System.Collections.Immutable;
+using System.Runtime.InteropServices;
 
 namespace EmployeeApp.Api.Controllers
 {
@@ -50,8 +52,25 @@ namespace EmployeeApp.Api.Controllers
             };
 
             return _serviceEmployee.AddEmployee(employee).mapEmployeeDTO();
+        }
 
-       
+        [HttpPut("update")]
+        public ActionResult<EmployeeDTO> UpdateEmployee(EmployeeDTO employeeDTO)
+        {
+            var employeeFound = _serviceEmployee.GetEmployee(employeeDTO.EmployeeCode);
+            if(employeeFound == null) return NotFound();
+
+            employeeFound.EmployeeCode = employeeDTO.EmployeeCode;
+            employeeFound.Name= employeeDTO.Name;
+            employeeFound.Email= employeeDTO.Email;
+            employeeFound.Age= employeeDTO.Age;
+            employeeFound.UrlPhoto= employeeDTO.UrlPhoto;
+
+             _serviceEmployee.UpdateEmployee(employeeFound);
+            return employeeDTO;
+            
+            
+
         }
 
 
