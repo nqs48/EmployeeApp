@@ -42,5 +42,15 @@ namespace EmployeeApp.Infrastructure.Services
         {
             return _employees;
         }
+
+        public Employee UpdateEmployee(Employee employee)
+        {
+            int posicion= _employees.FindIndex(e => e.Id== employee.Id);
+            if(posicion != -1) 
+            {
+                _employees[posicion]= employee;
+            }
+            return employee;
+        }
     }
 }

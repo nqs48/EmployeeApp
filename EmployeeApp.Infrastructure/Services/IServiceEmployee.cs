@@ -13,5 +13,6 @@ namespace EmployeeApp.Infrastructure.Services
         public Employee GetEmployee(string EmployeeCode);
 
         public Employee AddEmployee(Employee Employee);
+        public Employee UpdateEmployee(Employee Employee);
     }
 }
