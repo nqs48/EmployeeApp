@@ -68,10 +68,18 @@ namespace EmployeeApp.Api.Controllers
 
              _serviceEmployee.UpdateEmployee(employeeFound);
             return employeeDTO;
-            
-            
 
         }
+
+        [HttpDelete("delete/{EmployeeCode}")]
+        public ActionResult<EmployeeDTO> DeleteEmployee(string EmployeeCode)
+        {
+            var employeeFound= _serviceEmployee.GetEmployee(EmployeeCode);
+            if(employeeFound == null) return NotFound();
+            _serviceEmployee.DeleteEmployee(EmployeeCode);
+            return employeeFound.mapEmployeeDTO();
+        }
+
 
 
     }
