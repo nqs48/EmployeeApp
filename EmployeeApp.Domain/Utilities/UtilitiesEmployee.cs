@@ -13,7 +13,7 @@ namespace EmployeeApp.Domain.Utilities
         {
             if (employee == null)
             {
-                throw new ArgumentNullException();
+                return null;
             }
 
             return new EmployeeDTO()
