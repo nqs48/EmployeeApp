@@ -11,5 +11,7 @@ namespace EmployeeApp.Infrastructure.Services
     {
         public IEnumerable<Employee> GetEmployees();
         public Employee GetEmployee(string EmployeeCode);
+
+        public Employee AddEmployee(Employee Employee);
     }
 }

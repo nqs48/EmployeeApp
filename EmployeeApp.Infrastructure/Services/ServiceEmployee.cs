@@ -24,6 +24,12 @@ namespace EmployeeApp.Infrastructure.Services
             };
         }
 
+        public Employee AddEmployee(Employee Employee)
+        {
+            _employees.Add(Employee);
+            return Employee;
+        }
+
         public Employee GetEmployee(string EmployeeCode)
         {
             var employeeFound= _employees.Where(e => e.EmployeeCode == EmployeeCode).FirstOrDefault();
