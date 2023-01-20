@@ -1,7 +1,10 @@
 ﻿using EmployeeApp.Domain;
+using EmployeeApp.Domain.DTO;
+using EmployeeApp.Domain.Utilities;
 using EmployeeApp.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Immutable;
 
 namespace EmployeeApp.Api.Controllers
 {
@@ -17,9 +20,10 @@ namespace EmployeeApp.Api.Controllers
         }
 
         [HttpGet("all")]
-        public IEnumerable<Employee> GetAll()
+        public IEnumerable<EmployeeDTO> GetAll()
         {
-            return _serviceEmployee.GetEmployees();
+            return _serviceEmployee.GetEmployees().Select(e => e.mapEmployeeDTO());
+
         }
 
     }
