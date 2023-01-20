@@ -35,5 +35,27 @@ namespace EmployeeApp.Api.Controllers
 
         }
 
+        [HttpPost("add")]
+        public ActionResult<EmployeeDTO> AddEmployee(EmployeeDTO employeeDTO)
+        {
+            var employee = new Employee()
+            {
+                Id= _serviceEmployee.GetEmployees().Count() + 1,
+                Name = employeeDTO.Name,
+                EmployeeCode = employeeDTO.EmployeeCode,
+                UrlPhoto = employeeDTO.UrlPhoto,
+                Email = employeeDTO.Email,
+                Age = employeeDTO.Age,
+                HireDate= DateTime.Now,
+            };
+
+            return _serviceEmployee.AddEmployee(employee).mapEmployeeDTO();
+
+       
+        }
+
+
     }
+
+    
 }
