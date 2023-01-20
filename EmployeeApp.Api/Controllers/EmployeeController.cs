@@ -26,5 +26,14 @@ namespace EmployeeApp.Api.Controllers
 
         }
 
+        [HttpGet("get/{EmployeeCode}")]
+        public ActionResult<EmployeeDTO> EmployeeGetById(string EmployeeCode)
+        {
+            var employeeFound = this._serviceEmployee.GetEmployee(EmployeeCode).mapEmployeeDTO();
+            if (employeeFound == null) return NotFound();
+            return employeeFound;
+
+        }
+
     }
 }
