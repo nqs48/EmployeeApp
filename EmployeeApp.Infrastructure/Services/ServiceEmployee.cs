@@ -82,8 +82,6 @@ namespace EmployeeApp.Infrastructure.Services
                 sqlConnection.Close();
                 //Realease resources
                 sqlConnection.Dispose();
-
-
             }
             return employee;
         }
