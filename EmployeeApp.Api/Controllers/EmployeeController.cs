@@ -21,6 +21,8 @@ namespace EmployeeApp.Api.Controllers
             this._serviceEmployee = serviceEmployee;
         }
 
+
+
         [HttpGet("all")]
         public IEnumerable<EmployeeDTO> GetAll()
         {
@@ -28,21 +30,24 @@ namespace EmployeeApp.Api.Controllers
 
         }
 
+
+
         [HttpGet("get/{EmployeeCode}")]
         public ActionResult<EmployeeDTO> EmployeeGetById(string EmployeeCode)
         {
             var employeeFound = this._serviceEmployee.GetEmployee(EmployeeCode).mapEmployeeDTO();
-            if (employeeFound == null) return NotFound();
+            if (employeeFound == null) return NotFound("Employee not found");
             return employeeFound;
 
         }
+
+
 
         [HttpPost("add")]
         public ActionResult<EmployeeDTO> AddEmployee(EmployeeDTO employeeDTO)
         {
             var employee = new Employee()
             {
-                Id= _serviceEmployee.GetEmployees().Count() + 1,
                 Name = employeeDTO.Name,
                 EmployeeCode = employeeDTO.EmployeeCode,
                 UrlPhoto = employeeDTO.UrlPhoto,
@@ -51,8 +56,12 @@ namespace EmployeeApp.Api.Controllers
                 HireDate= DateTime.Now,
             };
 
-            return _serviceEmployee.AddEmployee(employee).mapEmployeeDTO();
+            _serviceEmployee.AddEmployee(employee);
+            return employee.mapEmployeeDTO();
         }
+
+
+
 
         [HttpPut("update")]
         public ActionResult<EmployeeDTO> UpdateEmployee(EmployeeDTO employeeDTO)
@@ -70,6 +79,8 @@ namespace EmployeeApp.Api.Controllers
             return employeeDTO;
 
         }
+
+
 
         [HttpDelete("delete/{EmployeeCode}")]
         public ActionResult<EmployeeDTO> DeleteEmployee(string EmployeeCode)
