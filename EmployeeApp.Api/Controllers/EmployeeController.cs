@@ -18,24 +18,24 @@ namespace EmployeeApp.Api.Controllers
 
         public EmployeeController(IServiceEmployee serviceEmployee)
         {
-            this._serviceEmployee = serviceEmployee;
+            _serviceEmployee = serviceEmployee;
         }
 
 
 
         [HttpGet("all")]
-        public IEnumerable<EmployeeDTO> GetAll()
+        public async Task<IEnumerable<EmployeeDTO>> GetAll()
         {
-            return _serviceEmployee.GetEmployees().Select(e => e.mapEmployeeDTO());
+            return (await _serviceEmployee.GetEmployees()).Select(e => e.mapEmployeeDTO());
 
         }
 
 
 
         [HttpGet("get/{EmployeeCode}")]
-        public ActionResult<EmployeeDTO> EmployeeGetById(string EmployeeCode)
+        public async Task<ActionResult<EmployeeDTO>> EmployeeGetById(string EmployeeCode)
         {
-            var employeeFound = this._serviceEmployee.GetEmployee(EmployeeCode).mapEmployeeDTO();
+            var employeeFound = (await _serviceEmployee.GetEmployee(EmployeeCode)).mapEmployeeDTO();
             if (employeeFound == null) return NotFound("Employee not found");
             return employeeFound;
 
@@ -44,7 +44,7 @@ namespace EmployeeApp.Api.Controllers
 
 
         [HttpPost("add")]
-        public ActionResult<EmployeeDTO> AddEmployee(EmployeeDTO employeeDTO)
+        public async Task<ActionResult<EmployeeDTO>> AddEmployee(EmployeeDTO employeeDTO)
         {
             var employee = new Employee()
             {
@@ -56,7 +56,7 @@ namespace EmployeeApp.Api.Controllers
                 HireDate= DateTime.Now,
             };
 
-            _serviceEmployee.AddEmployee(employee);
+            await _serviceEmployee.AddEmployee(employee);
             return employee.mapEmployeeDTO();
         }
 
@@ -64,9 +64,9 @@ namespace EmployeeApp.Api.Controllers
 
 
         [HttpPut("update")]
-        public ActionResult<EmployeeDTO> UpdateEmployee(EmployeeDTO employeeDTO)
+        public async Task<ActionResult<EmployeeDTO>> UpdateEmployee(EmployeeDTO employeeDTO)
         {
-            var employeeFound = _serviceEmployee.GetEmployee(employeeDTO.EmployeeCode);
+            var employeeFound = await _serviceEmployee.GetEmployee(employeeDTO.EmployeeCode);
             if(employeeFound == null) return NotFound();
 
             employeeFound.EmployeeCode = employeeDTO.EmployeeCode;
@@ -75,7 +75,7 @@ namespace EmployeeApp.Api.Controllers
             employeeFound.Age= employeeDTO.Age;
             employeeFound.UrlPhoto= employeeDTO.UrlPhoto;
 
-             _serviceEmployee.UpdateEmployee(employeeFound);
+             await _serviceEmployee.UpdateEmployee(employeeFound);
             return employeeDTO;
 
         }
@@ -83,11 +83,11 @@ namespace EmployeeApp.Api.Controllers
 
 
         [HttpDelete("delete/{EmployeeCode}")]
-        public ActionResult<EmployeeDTO> DeleteEmployee(string EmployeeCode)
+        public async Task<ActionResult<EmployeeDTO>> DeleteEmployee(string EmployeeCode)
         {
-            var employeeFound= _serviceEmployee.GetEmployee(EmployeeCode);
+            var employeeFound= await _serviceEmployee.GetEmployee(EmployeeCode);
             if(employeeFound == null) return NotFound();
-            _serviceEmployee.DeleteEmployee(EmployeeCode);
+            await _serviceEmployee.DeleteEmployee(EmployeeCode);
             return employeeFound.mapEmployeeDTO();
         }
 
