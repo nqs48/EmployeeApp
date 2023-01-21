@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -27,7 +28,7 @@ namespace EmployeeApp.Infrastructure.Services
         }
 
 
-        public void AddEmployee(Employee employee)
+        public async Task AddEmployee(Employee employee)
         {
             SqlConnection sqlConnection = Conection();
             try
@@ -41,7 +42,7 @@ namespace EmployeeApp.Infrastructure.Services
                 param.Add("@Age", employee.Age, DbType.Int32, ParameterDirection.Input);
                 param.Add("@HireDate", employee.HireDate, DbType.DateTime, ParameterDirection.Input);
 
-                sqlConnection.ExecuteScalar("EmployeeAdd", param, commandType: CommandType.StoredProcedure);
+                await sqlConnection.ExecuteScalarAsync("EmployeeAdd", param, commandType: CommandType.StoredProcedure);
             }
             catch(Exception ex)
             {
@@ -49,17 +50,14 @@ namespace EmployeeApp.Infrastructure.Services
             }
             finally 
             { 
-                //Cerrer conection
+                //Close conection
                 sqlConnection.Close();
-
                 //Liberar recursos
                 sqlConnection.Dispose();
-
-
             }
         }
 
-        public Employee GetEmployee(string employeeCode)
+        public async Task<Employee> GetEmployee(string employeeCode)
         {
             SqlConnection sqlConnection = Conection();
             Employee employee = null;
@@ -69,7 +67,7 @@ namespace EmployeeApp.Infrastructure.Services
                 var param = new DynamicParameters();
                 param.Add("@EmployeeCode", employeeCode, DbType.String, ParameterDirection.Input, 4);
               
-                employee=  sqlConnection.QueryFirstOrDefault<Employee>("EmployeeGet", param, commandType: CommandType.StoredProcedure);
+                employee=  await sqlConnection.QueryFirstOrDefaultAsync<Employee>("EmployeeGet", param, commandType: CommandType.StoredProcedure);
                 
             }
             catch (Exception ex)
@@ -78,7 +76,7 @@ namespace EmployeeApp.Infrastructure.Services
             }
             finally
             {
-                //Close conection
+                //Close connection
                 sqlConnection.Close();
                 //Realease resources
                 sqlConnection.Dispose();
@@ -86,7 +84,7 @@ namespace EmployeeApp.Infrastructure.Services
             return employee;
         }
 
-        public IEnumerable<Employee> GetEmployees()
+        public async Task<IEnumerable<Employee>> GetEmployees()
         {
             SqlConnection sqlConnection = Conection();
             List<Employee> employees = new List<Employee>();
@@ -94,7 +92,7 @@ namespace EmployeeApp.Infrastructure.Services
             {
                 sqlConnection.Open();
                
-                var res = sqlConnection.Query<Employee>("EmployeeGet", commandType: CommandType.StoredProcedure);
+                var res = await sqlConnection.QueryAsync<Employee>("EmployeeGet", commandType: CommandType.StoredProcedure);
                 employees= res.ToList();
             }
             catch (Exception ex)
@@ -103,7 +101,7 @@ namespace EmployeeApp.Infrastructure.Services
             }
             finally
             {
-                //Close conection
+                //Close connection
                 sqlConnection.Close();
                 //Liberar recursos
                 sqlConnection.Dispose();
@@ -113,7 +111,7 @@ namespace EmployeeApp.Infrastructure.Services
             return employees;
         }
 
-        public void UpdateEmployee(Employee employee)
+        public async Task UpdateEmployee(Employee employee)
         {
             SqlConnection sqlConnection = Conection();
             try
@@ -126,7 +124,7 @@ namespace EmployeeApp.Infrastructure.Services
                 param.Add("@Email", employee.Email, DbType.String, ParameterDirection.Input, 100);
                 param.Add("@Age", employee.Age, DbType.Int32, ParameterDirection.Input);
 
-                sqlConnection.ExecuteScalar("EmployeeUpdate", param, commandType: CommandType.StoredProcedure);
+                await sqlConnection.ExecuteScalarAsync("EmployeeUpdate", param, commandType: CommandType.StoredProcedure);
             }
             catch (Exception ex)
             {
@@ -134,14 +132,14 @@ namespace EmployeeApp.Infrastructure.Services
             }
             finally
             {
-                //Cerrer conection
+                //Close connection
                 sqlConnection.Close();
                 //Liberar recursos
                 sqlConnection.Dispose();
             }
         }
 
-        public void DeleteEmployee(string employeeCode)
+        public async Task DeleteEmployee(string employeeCode)
         {
             SqlConnection sqlConnection = Conection();
             try
@@ -150,7 +148,7 @@ namespace EmployeeApp.Infrastructure.Services
                 var param = new DynamicParameters();
                 param.Add("@EmployeeCode", employeeCode, DbType.String, ParameterDirection.Input, 4);
 
-                sqlConnection.ExecuteScalar("EmployeeDelete", param, commandType: CommandType.StoredProcedure);
+                await sqlConnection.ExecuteScalarAsync("EmployeeDelete", param, commandType: CommandType.StoredProcedure);
             }
             catch (Exception ex)
             {
@@ -158,7 +156,7 @@ namespace EmployeeApp.Infrastructure.Services
             }
             finally
             {
-                //Cerrer conection
+                //Close connection
                 sqlConnection.Close();
                 //Liberar recursos
                 sqlConnection.Dispose();
