@@ -14,6 +14,6 @@ namespace EmployeeApp.Infrastructure.Services
 
         public void AddEmployee(Employee employee);
         public void UpdateEmployee(Employee employee);
-        public Employee DeleteEmployee(string employeeCode);
+        public void DeleteEmployee(string employeeCode);
     }
 }

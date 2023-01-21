@@ -45,7 +45,7 @@ namespace EmployeeApp.Infrastructure.Services
             }
             catch(Exception ex)
             {
-                throw new Exception("Unespected Error" + ex.Message);
+                throw new Exception("An error occurred while adding the employee" + ex.Message);
             }
             finally 
             { 
@@ -74,7 +74,7 @@ namespace EmployeeApp.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Unspected Error" + ex.Message);
+                throw new Exception("An error occurred while get the employee" + ex.Message);
             }
             finally
             {
@@ -99,7 +99,7 @@ namespace EmployeeApp.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Unspected Error" + ex.Message);
+                throw new Exception("An error occurred while getting the employees" + ex.Message);
             }
             finally
             {
@@ -130,7 +130,7 @@ namespace EmployeeApp.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Unespected Error" + ex.Message);
+                throw new Exception("An error occurred while updating the employee" + ex.Message);
             }
             finally
             {
@@ -141,9 +141,28 @@ namespace EmployeeApp.Infrastructure.Services
             }
         }
 
-        public Employee DeleteEmployee(string EmployeeCode)
+        public void DeleteEmployee(string employeeCode)
         {
-            throw new NotImplementedException();
+            SqlConnection sqlConnection = Conection();
+            try
+            {
+                sqlConnection.Open();
+                var param = new DynamicParameters();
+                param.Add("@EmployeeCode", employeeCode, DbType.String, ParameterDirection.Input, 4);
+
+                sqlConnection.ExecuteScalar("EmployeeDelete", param, commandType: CommandType.StoredProcedure);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while deleting the employee" + ex.Message);
+            }
+            finally
+            {
+                //Cerrer conection
+                sqlConnection.Close();
+                //Liberar recursos
+                sqlConnection.Dispose();
+            }
         }
     }
 }
